@@ -1,0 +1,35 @@
+# -------------------------------------
+# Directorios de Python y Entorno
+# -------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+venv/
+*.egg-info/
+build/
+dist/
+
+# -------------------------------------
+# Bases de Datos y Medios Locales
+# -------------------------------------
+db.sqlite3
+*.log
+media/
+static/local_cache/
+
+# -------------------------------------
+# Configuraciones Sensibles (Claves y Contraseñas)
+# -------------------------------------
+# Idealmente, usa Variables de Entorno, pero si tienes un archivo local:
+# .env 
+# settings_local.py
+*secrets.json
+
+# -------------------------------------
+# Específicas de IDEs
+# -------------------------------------
+.vscode/
+.idea/

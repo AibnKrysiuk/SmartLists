@@ -1,0 +1,36 @@
+{% extends "settings_ui/settings_base.html" %}
+
+{% block title %}Preferences{% endblock %}
+
+{% block settings_content %}
+    <h2><i class="fas fa-sliders-h"></i> Application Preferences</h2>
+    <p class="description">Customize how SmartList Stock looks and behaves for you.</p>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="success">{{ message }}</li> 
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post" class="profile-form">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="error-message">{{ field.errors }}</div>
+                {% endif %}
+                {% if field.help_text %}
+                    <small class="help-text">{{ field.help_text|safe }}</small>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="button-primary">Save Preferences</button>
+    </form>
+
+{% endblock settings_content %}

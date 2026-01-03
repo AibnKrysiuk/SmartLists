@@ -1,0 +1,66 @@
+/* lists/static/lists/css/forms.css */
+
+/* Estilos de Contenedor de Formularios */
+.form-container {
+    background: var(--color-card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--color-shadow);
+    max-width: 600px;
+    margin-top: 20px;
+}
+
+/* Estilos de Input y Select */
+.creation-form .form-group {
+    margin-bottom: 20px;
+}
+.creation-form input[type="text"],
+.creation-form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+/* Botón Secundario (Back) */
+.btn-secondary {
+    background-color: #f1f3f5;
+    color: var(--color-text-dark);
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+}
+.btn-secondary i {
+    margin-right: 8px;
+}
+.btn-secondary:hover {
+    background-color: #e9ecef;
+}
+
+/* Botón Primario Grande */
+.btn-primary-large {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    width: 100%; /* Ocupa todo el ancho */
+}
+.btn-primary-large:hover {
+    opacity: 0.9;
+}
+.btn-primary-large i {
+    margin-right: 8px;
+}

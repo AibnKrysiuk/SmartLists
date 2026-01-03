@@ -1,0 +1,33 @@
+{% extends "settings_ui/settings_base.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block settings_content %}
+    <h2><i class="fas fa-user-circle"></i> Edit Profile</h2>
+    <p class="description">Update your personal account information.</p>
+
+    <form method="post" class="profile-form">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="error-message">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="button-primary">Save Changes</button>
+    </form>
+    
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+{% endblock settings_content %}

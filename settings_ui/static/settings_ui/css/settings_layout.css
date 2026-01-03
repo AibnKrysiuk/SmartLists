@@ -1,0 +1,98 @@
+/* settings_ui/static/settings_ui/css/settings_layout.css */
+
+/* --- Layout Principal de Settings --- */
+.settings-layout {
+    display: flex;
+    gap: 30px;
+    padding-top: 20px;
+    margin-top: 20px;
+    border-top: 1px solid var(--color-border);
+}
+
+.sidebar {
+    flex: 0 0 250px; /* Ancho fijo para el menú lateral */
+    padding-right: 20px;
+}
+
+.settings-content {
+    flex: 1; /* Ocupa el espacio restante */
+    max-width: 800px;
+}
+
+/* --- Estilos de Navegación Lateral --- */
+.sidebar h3 {
+    color: var(--color-text-secondary);
+    font-size: 0.9em;
+    text-transform: uppercase;
+    margin-top: 25px;
+    margin-bottom: 5px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li a {
+    display: block;
+    padding: 10px 15px;
+    margin: 4px 0;
+    border-radius: 5px;
+    text-decoration: none;
+    color: var(--color-text);
+    transition: background-color 0.2s;
+}
+
+.sidebar li a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar li a:hover {
+    background-color: var(--color-background-hover);
+}
+
+.sidebar li.active a {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+/* --- Estilos del Formulario de Perfil --- */
+.settings-content h2 {
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.profile-form .form-group {
+    margin-bottom: 20px;
+}
+
+.profile-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--color-text-secondary);
+}
+
+.profile-form input[type="text"],
+.profile-form input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+.profile-form .button-primary {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+}

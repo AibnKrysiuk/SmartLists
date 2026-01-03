@@ -1,0 +1,248 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartList Stock - {% block title %}Dashboard{% endblock %}</title>
+    
+    <link rel="stylesheet" href="{% static 'lists/css/dashboard_grid.css' %}">
+    <link rel="stylesheet" href="{% static 'lists/css/list_detail.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="{% static 'lists/css/forms.css' %}"> 
+
+    {% block extra_head %}{% endblock %} 
+</head>
+<body>
+    <div class="app-layout">
+        
+        {% block top_nav %}
+            <header class="top-nav">
+                <div class="logo">
+                    <i class="fas fa-box logo-icon"></i>
+                    <h1>SmartList Stock</h1>
+                </div>
+                
+                <nav class="main-menu">
+                    <a href="{% url 'lists:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Lists</a>
+                    <a href="{% url 'settings_ui:settings' %}" class="nav-link {% if 'settings_ui' in request.resolver_match.namespaces %}active{% endif %}">Settings</a> 
+                </nav>
+
+                <div class="user-controls">
+                    <i class="fas fa-bell notification-icon"></i>
+                    
+                    <div class="profile-dropdown-container">
+                        <div class="avatar" id="avatar-button"></div>
+                        
+                        <div class="profile-dropdown-menu" id="user-menu">
+                            <a href="{% url 'settings_ui:profile' %}" class="menu-item">
+                                <i class="fas fa-cog"></i> Edit Profile / Settings
+                            </a>
+                            <div class="menu-separator"></div>
+                            
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="menu-item logout-item">
+                                    <i class="fas fa-sign-out-alt"></i> Log Out
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        {% endblock top_nav %}
+
+        <main class="main-content">
+            {% block body_content %}
+    
+            <div class="dashboard-header">
+                <h1>My Lists</h1>
+                <a href="{% url 'lists:create' %}" class="btn-primary">
+                    <i class="fas fa-plus"></i> Create New List
+                </a>
+            </div>
+            
+            <div class="list-grid">
+                
+                {% for list in user_lists %}
+    
+                    <div class="list-card type-{{ list.list_type }}">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <a href="{% url 'lists:detail' pk=list.pk %}">
+                                    <h2>{{ list.title }}</h2>
+                                </a>
+                                <p>{{ list.get_list_type_display }}</p> 
+                            </div>
+                            
+                            <div class="card-icon-container">
+                                {% if list.list_type == 'stock' %}
+                                    <i class="fas fa-warehouse"></i>
+                                {% else %}
+                                    <i class="fas fa-list-check"></i>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="card-actions-menu-container">
+                                <i class="fas fa-ellipsis-v card-menu-button"></i>
+                                
+                                <div class="list-action-dropdown">
+                                    <a href="{% url 'lists:list_update' pk=list.pk %}" class="menu-item"><i class="fas fa-edit"></i> Edit List</a>
+                                    <a href="{% url 'lists:list_delete' pk=list.pk %}" class="menu-item delete-item"><i class="fas fa-trash-alt"></i> Delete List</a>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="card-content">
+                            {% if list.items.count == 0 %} 
+                                <p class="summary-placeholder">This list is empty. Add items!</p>
+                            {% else %}
+                                <p>Ready to go! Click to see the details.</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="footer-stats">
+                                Items: <strong>{{ list.items.count }}</strong> 
+                            </div>
+                            <div class="footer-date">Updated: {{ list.updated_at|date:"M d, H:i" }}</div>
+                        </div>
+                    </div>
+                    
+                {% empty %}
+                    <div class="empty-state-card">
+                        <h2>No Lists Found</h2>
+                        <p>Start managing your inventory and tasks by creating your first list.</p>
+                        <a href="{% url 'lists:create' %}" class="btn-primary-small">
+                            <i class="fas fa-plus"></i> Create List Now
+                        </a>
+                    </div>
+                {% endfor %}
+                <div class="list-card add-new-card">
+                    <a href="{% url 'lists:create' %}">
+                        <i class="fas fa-plus-circle"></i>
+                        <h3>Add New List</h3>
+                        <p>Stock or Checklist</p>
+                    </a>
+                </div>
+
+            </div>
+            
+            <style>
+                .empty-state-card {
+                    grid-column: 1 / -1; /* Ocupa todo el ancho */
+                    text-align: center;
+                    padding: 50px;
+                    background-color: var(--color-card-bg);
+                    border-radius: 12px;
+                    border: 2px dashed var(--color-border);
+                }
+                .empty-state-card h2 {
+                    margin-bottom: 10px;
+                }
+            </style>
+
+            <h2 style="margin-top: 30px;"><i class="fas fa-upload"></i> Import List from JSON</h2>
+            <div class="import-form-container" style="padding: 20px; border: 1px dashed #ccc; border-radius: 8px;">
+                <form method="post" action="{% url 'lists:import_json' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <label for="id_json_file" style="font-weight: bold; min-width: 120px;">
+                            Select JSON File:
+                        </label>
+                        <input type="file" name="json_file" id="id_json_file" accept=".json" required 
+                            style="flex-grow: 1; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                        
+                        <button type="submit" class="btn-primary-small" style="min-width: 150px;">
+                            <i class="fas fa-file-import"></i> Import List
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        {% endblock body_content %}
+        </main>
+    </div>
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    
+    // ===========================================
+    // 1. Lógica del Menú Desplegable de Perfil
+    // ===========================================
+    const avatarButton = document.getElementById('avatar-button');
+    const userMenu = document.getElementById('user-menu');
+    
+    function toggleProfileMenu() {
+        if (userMenu) {
+            userMenu.classList.toggle('active');
+        }
+    }
+
+    if (avatarButton) {
+        avatarButton.addEventListener('click', toggleProfileMenu);
+    }
+
+    // ===========================================
+    // 2. Lógica de Menús de Tarjetas (Ellipsis)
+    // ===========================================
+    
+    // Seleccionar todos los botones de menú de tarjeta
+    document.querySelectorAll('.card-menu-button').forEach(button => {
+        button.addEventListener('click', function(event) {
+            // Prevenir la acción predeterminada del botón y la propagación del evento
+            // para que no se active el enlace de la tarjeta principal.
+            event.preventDefault(); 
+            event.stopPropagation(); 
+            
+            // Encontrar el menú desplegable asociado a este botón.
+            // .closest() busca el ancestro más cercano con la clase especificada.
+            const dropdown = this.closest('.card-actions-menu-container').querySelector('.list-action-dropdown');
+            
+            // Cerrar todos los demás menús de tarjetas abiertos
+            document.querySelectorAll('.list-action-dropdown.active').forEach(menu => {
+                if (menu !== dropdown) {
+                    menu.classList.remove('active');
+                }
+            });
+
+            // Abrir/Cerrar el menú actual
+            if (dropdown) {
+                dropdown.classList.toggle('active');
+            }
+        });
+    });
+
+    // ===========================================
+    // 3. Cierre Global de Menús al hacer clic fuera
+    // ===========================================
+    document.addEventListener('click', function(event) {
+        
+        // Cierre del menú de perfil
+        if (userMenu && userMenu.classList.contains('active')) {
+            const isClickInsideProfileMenu = userMenu.contains(event.target);
+            const isClickOnAvatar = event.target === avatarButton;
+            
+            if (!isClickInsideProfileMenu && !isClickOnAvatar) {
+                userMenu.classList.remove('active');
+            }
+        }
+
+        // Cierre de menús de tarjetas
+        document.querySelectorAll('.list-action-dropdown.active').forEach(menu => {
+            // Si el clic no fue dentro del contenedor del menú (o el botón que lo activa)
+            if (!menu.parentElement.contains(event.target)) {
+                 menu.classList.remove('active');
+            }
+        });
+    });
+});
+</script>
+{% endblock scripts %}
+
+</body>
+</html>

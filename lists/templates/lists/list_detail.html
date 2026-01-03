@@ -1,0 +1,296 @@
+{% extends "lists/dashboard.html" %}
+
+{% block page_title %}{{ list_data.title }}{% endblock %}
+
+{% block body_content %}
+<div class="main-content">
+    
+    <div class="list-header">
+        <a href="{% url 'lists:dashboard' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to My Lists
+        </a>
+        <h1 class="list-title">
+            </h1>
+        <a href="{% url 'lists:list_update' pk=list_data.pk %}" class="btn-primary">
+            <i class="fas fa-edit"></i> Edit List Info
+        </a>
+        
+        <a href="{% url 'lists:export_json' pk=list_data.pk %}" class="btn-secondary" title="Export for App Import">
+            <i class="fas fa-file-export"></i> Export JSON
+        </a>
+        
+        <button id="copy-plaintext-btn" class="btn-secondary" style="margin-left: 10px;" title="Copy to clipboard for WhatsApp">
+            <i class="fas fa-copy"></i> Copy Text
+        </button>
+
+        <a href="{% url 'lists:export_plaintext' pk=list_data.pk %}" target="_blank" class="btn-secondary" style="margin-left: 10px;" title="Download PDF Document">
+            <i class="fas fa-file-pdf"></i> Export PDF (Coming Soon)
+        </a>
+    </div>
+
+    {% if list_data.list_type == 'stock' %}
+    <div class="add-subtitle-container" style="margin-bottom: 20px; padding: 15px 20px; background: #f0f4f7; border-radius: 8px; border: 1px solid var(--color-border);">
+        <h3 style="font-size: 16px; margin-bottom: 10px; color: var(--color-text-dark);">
+            <i class="fas fa-tags"></i> Add New Section / Subtitle
+        </h3>
+        <form method="post" class="subtitle-form">
+            {% csrf_token %}
+            <div style="display: flex; gap: 15px; align-items: flex-end;">
+                <div style="flex-grow: 1;">
+                    {{ subtitle_form.name }}
+                    {% if subtitle_form.name.errors %}
+                        <span class="form-error">{{ subtitle_form.name.errors }}</span>
+                    {% endif %}
+                </div>
+                <input type="hidden" name="is_subtitle_submit" value="1"> 
+                <button type="submit" class="btn-primary-small" style="min-width: 150px;">
+                    <i class="fas fa-layer-group"></i> Add Section
+                </button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    <div class="add-item-container">
+        <form method="post" class="item-form">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div class="form-group-item item-name">
+                    {{ item_form.name.label_tag }}
+                    {{ item_form.name }}
+                    {% if item_form.name.errors %}
+                        <span class="form-error">{{ item_form.name.errors }}</span>
+                    {% endif %}
+                </div>
+                
+                {% if list_data.list_type == 'stock' %}
+                    <div class="form-group-item item-quantity">
+                        {{ item_form.quantity.label_tag }}
+                        {{ item_form.quantity }}
+                        {% if item_form.quantity.errors %}
+                            <span class="form-error">{{ item_form.quantity.errors }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group-item item-unit">
+                        {{ item_form.unit.label_tag }}
+                        {{ item_form.unit }}
+                        {% if item_form.unit.errors %}
+                            <span class="form-error">{{ item_form.unit.errors }}</span>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <input type="hidden" name="quantity" value="0">
+                    <input type="hidden" name="unit" value="">
+                {% endif %}
+                
+                <button type="submit" class="btn-primary-small add-button">
+                    <i class="fas fa-plus"></i> Add Item
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <h2 style="margin-top: 30px;">Items ({{ items.count }})</h2>
+
+    {% if items %}
+    <table class="items-table" data-list-pk="{{ list_data.pk }}" data-reorder-url="{% url 'lists:reorder_items' pk=list_data.pk %}">
+    <thead>
+        <tr>
+            <th style="width: {% if list_data.list_type == 'stock' %}45%{% else %}75%{% endif %};">Item / Task</th> 
+            
+            {% if list_data.list_type == 'stock' %}
+                <th style="width: 5%; text-align: center;">Move</th> 
+                <th style="width: 10%; text-align: center;">Quantity</th>
+                <th style="width: 15%;">Unit</th>
+                <th style="width: 10%; text-align: center;">Actions</th>
+            {% else %}
+                <th style="width: 5%; text-align: center;">Move</th> 
+                <th style="width: 10%; text-align: center;">Done</th>
+                <th style="width: 10%; text-align: center;">Actions</th>
+            {% endif %}
+        </tr>
+    </thead>
+    
+    <tbody id="sortable-list-items"> 
+        {% for item in items %}
+            {% if item.is_subtitle %}
+                <tr class="subtitle-row" data-item-id="{{ item.pk }}">
+                    <td colspan="6" style="padding: 15px; background: #e9ecef; font-weight: 700; font-size: 1.1em; border-bottom: 2px solid #adb5bd; color: var(--color-text-dark);">
+                        {{ item.name }}
+                    </td>
+                </tr>
+            {% else %}
+                <tr id="item-row-{{ item.pk }}" data-item-id="{{ item.pk }}" class="{% if item.is_completed %}completed{% endif %}">
+                    <td class="item-name-cell">
+                        {{ item.name }}
+                    </td>
+
+                    <td class="handle-cell sortable-handle" style="text-align: center;">
+                        <i class="fas fa-grip-vertical" style="cursor: grab;"></i> 
+                    </td>
+
+                    {% if list_data.list_type == 'stock' %}
+                        <td class="item-quantity-cell">
+                            <form method="post" action="{% url 'lists:item_update' pk=item.pk %}" class="update-quantity-form">
+                                {% csrf_token %}
+                                <input type="number" name="quantity" value="{{ item.quantity }}" min="0" class="quantity-input" onchange="this.form.submit()">
+                            </form>
+                        </td>
+                        <td class="item-unit-cell" style="text-align: left;">
+                            {{ item.unit }}
+                        </td>
+                        <td class="item-actions-cell" style="text-align: center;">
+                            <a href="{% url 'lists:item_delete' pk=item.pk %}" class="btn-icon delete-item-btn" title="Delete Item">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    {% else %}
+                        <td class="item-done-cell" style="text-align: center;">
+                            <form method="post" action="{% url 'lists:item_update' pk=item.pk %}" class="update-done-form">
+                                {% csrf_token %}
+                                <input type="checkbox" name="is_completed" {% if item.is_completed %}checked{% endif %} onchange="this.form.submit()">
+                            </form>
+                        </td>
+                        <td class="item-actions-cell" style="text-align: center;">
+                            <a href="{% url 'lists:item_delete' pk=item.pk %}" class="btn-icon delete-item-btn" title="Delete Task">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+    {% else %}
+        <p style="margin-top: 20px; color: var(--color-text-gray);">No items or sections have been added to this list yet.</p>
+    {% endif %}
+
+</div>
+{% include "lists/js/list_detail_scripts.html" %}
+<script>
+// lists/templates/lists/list_detail.html (Dentro del bloque <script>)
+
+// Función auxiliar para obtener el token CSRF de las cookies (se mantiene igual)
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const listContainer = document.getElementById('sortable-list-items');
+    const csrfToken = getCookie('csrftoken');
+    
+    const tableElement = document.querySelector('.items-table');
+    const reorderUrl = tableElement ? tableElement.dataset.reorderUrl : null;
+
+    if (listContainer && reorderUrl) {
+        new Sortable(listContainer, {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            
+            // 🆕 CAMBIO CLAVE: Usamos 'filter' para evitar conflictos con inputs
+            // Permitimos arrastrar TODA la fila, pero ignoramos los inputs (Cantidad, Checkbox)
+            filter: 'input, .btn-icon', 
+            preventOnFilter: true, // Esto asegura que puedas interactuar con el input/botón
+
+            // 🆕 Opcional: Si quieres un handle específico, usa solo esta opción:
+            // handle: '.sortable-handle, .sortable-handle-subtitle', 
+            // Si usas el handle, asegúrate de quitar la columna "Move" y pon el handle en la celda de nombre.
+
+            onEnd: function (evt) {
+                const orderedItemIds = Array.from(listContainer.children)
+                    .map(row => row.getAttribute('data-item-id'))
+                    .filter(id => id); 
+
+                if (orderedItemIds.length === 0) return;
+
+                fetch(reorderUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ item_ids: orderedItemIds })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        console.log("Reordenamiento exitoso");
+                    } else {
+                        console.error("Error al reordenar:", data.error);
+                        alert('Error al guardar el orden. Recargando...');
+                        window.location.reload(); 
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la comunicación AJAX:', error);
+                    alert('Error fatal de conexión. Recargando...');
+                    window.location.reload();
+                });
+            }
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    // ... (Código de SortableJS y getCookie se mantienen) ...
+
+    const copyBtn = document.getElementById('copy-plaintext-btn');
+    
+    if (copyBtn) {
+        const tableElement = document.querySelector('.items-table');
+        // Usamos la URL que definimos en urls.py
+        const plaintextUrl = "{% url 'lists:export_plaintext' pk=list_data.pk %}";
+
+        copyBtn.addEventListener('click', () => {
+            // 1. Obtener el texto plano del servidor
+            fetch(plaintextUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch plaintext.');
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    // 2. Usar la API del Portapapeles
+                    navigator.clipboard.writeText(text)
+                        .then(() => {
+                            // 3. Feedback visual
+                            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                            setTimeout(() => {
+                                copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Text';
+                            }, 2000);
+                        })
+                        .catch(err => {
+                            alert('Could not copy text. Please enable clipboard access in your browser.');
+                            console.error('Error copying text:', err);
+                        });
+                })
+                .catch(error => {
+                    alert('Error getting list content for copy.');
+                    console.error(error);
+                });
+        });
+    }
+
+});
+</script>
+{% endblock body_content %}

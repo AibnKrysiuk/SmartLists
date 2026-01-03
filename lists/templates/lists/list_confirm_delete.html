@@ -1,0 +1,36 @@
+{% extends "lists/dashboard.html" %}
+
+{% block page_title %}Delete List: {{ list.title }}{% endblock %}
+
+{% block body_content %}
+<div class="main-content">
+    <div class="form-container" style="max-width: 500px; margin: 0 auto; padding: 40px; background: white; border-radius: 10px; box-shadow: var(--color-shadow);">
+        
+        <h1 style="font-size: 24px; color: var(--color-danger); margin-bottom: 20px;">Confirm Deletion</h1>
+        
+        <p style="font-size: 16px; margin-bottom: 30px; line-height: 1.5;">
+            Are you absolutely sure you want to delete the list: 
+            <strong>"{{ list.title }}"</strong>?
+            <br>
+            All {{ list.items.count }} items within this list will be permanently lost.
+            This action cannot be undone.
+        </p>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="display: flex; justify-content: space-between; gap: 15px;">
+                <button type="submit" class="btn-primary" 
+                    style="background-color: var(--color-danger); flex-grow: 1;">
+                    <i class="fas fa-trash-alt"></i> Yes, Delete List
+                </button>
+                
+                <a href="{% url 'lists:detail' pk=list.pk %}" class="btn-primary" 
+                    style="background-color: var(--color-text-gray); flex-grow: 1; text-align: center; justify-content: center;">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock body_content %}

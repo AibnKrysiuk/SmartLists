@@ -1,0 +1,108 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Función para obtener el token CSRF de la cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // ===============================================
+    // 1. Lógica para Checkbox (Checklist)
+    // ===============================================
+    document.querySelectorAll('.completion-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const itemPk = this.getAttribute('data-item-pk');
+            const form = this.closest('.update-form-checklist');
+            
+            // Simula el envío del formulario con AJAX
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                // Aseguramos que solo se envíen los datos necesarios
+                body: `is_completed=${this.checked ? 'on' : ''}&quantity=0` 
+            })
+            .then(response => {
+                if (response.ok) {
+                    const row = document.getElementById(`item-row-${itemPk}`);
+                    if (this.checked) {
+                        row.classList.add('completed');
+                    } else {
+                        row.classList.remove('completed');
+                    }
+                    // Opcional: Mostrar un mensaje de éxito/error.
+                } else {
+                    alert('Error updating item. Please try again.');
+                    this.checked = !this.checked; // Revertir el estado visual
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert('Network error. Check console.');
+                this.checked = !this.checked; // Revertir el estado visual
+            });
+        });
+    });
+
+    // ===============================================
+    // 2. Lógica para Input de Cantidad (Stock)
+    // ===============================================
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        // Al perder el foco (blur) o al presionar Enter
+        input.addEventListener('blur', saveQuantityChange);
+        input.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Evitar el envío de formulario tradicional
+                saveQuantityChange.call(this);
+            }
+        });
+
+        function saveQuantityChange() {
+            const itemPk = this.getAttribute('data-item-pk');
+            const form = this.closest('.update-form-stock');
+            const newQuantity = this.value;
+            
+            // Usamos un objeto FormData para obtener todos los campos del formulario
+            const formData = new FormData(form);
+            formData.set('quantity', newQuantity); // Aseguramos el valor correcto
+            
+            // Convertir FormData a URLSearchParams para 'Content-Type': 'application/x-www-form-urlencoded'
+            const bodyData = new URLSearchParams(formData).toString();
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: bodyData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    alert('Error updating quantity. Please check the value.');
+                    // Opcional: Recargar la página para obtener el valor original
+                    // location.reload(); 
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert('Network error. Check console.');
+            });
+        }
+    });
+});
+</script>

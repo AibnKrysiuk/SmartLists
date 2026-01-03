@@ -1,0 +1,234 @@
+/* --- ESTILOS PARA LISTA DE DETALLE (list_detail.html) --- */
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 15px;
+}
+
+.detail-header .back-link {
+    font-size: 14px;
+    color: var(--color-text-gray);
+    transition: color 0.2s;
+}
+.detail-header .back-link:hover {
+    color: var(--color-primary);
+}
+
+.title-section {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: 20px;
+}
+.list-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+}
+
+.list-type {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.list-type.type-stock {
+    background-color: var(--color-stock);
+    color: white;
+}
+
+.list-type.type-checklist {
+    background-color: var(--color-checklist);
+    color: white;
+}
+
+.btn-secondary {
+    background-color: white;
+    color: var(--color-text-gray);
+    border: 1px solid var(--color-border);
+    padding: 8px 15px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.btn-secondary:hover {
+    background-color: #f5f5f5;
+    color: var(--color-text-dark);
+    border-color: #ccc;
+}
+
+/* --- AÑADIR ÍTEM FORMULARIO --- */
+.add-item-container {
+    background-color: #fcfcfc;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    margin-bottom: 30px;
+}
+
+.item-form .form-row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.form-group-item {
+    flex-grow: 1;
+}
+
+.form-group-item label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.item-name {
+    flex-basis: 40%; /* 65% para el nombre */
+}
+.item-quantity {
+    flex-basis: 15%; /* 25% para la cantidad */
+}
+
+.item-unit {
+    flex-basis: 15%; /* Nueva columna de Unidad */
+}
+
+.add-button {
+    flex-basis: 30%; /* 10% para el botón */
+    min-width: 120px;
+    padding: 10px 15px !important;
+}
+
+/* Ajuste general para que el input del subtítulo ocupe todo el ancho */
+.subtitle-form input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+}
+
+.form-group-item input[type="text"], .form-group-item input[type="number"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 16px;
+}
+.form-error {
+    color: var(--color-danger);
+    font-size: 12px;
+    display: block;
+    margin-top: 5px;
+}
+
+/* --- TABLA DE ÍTEMS --- */
+.items-heading {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--color-text-dark);
+}
+
+.items-table-container {
+    overflow-x: auto;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: var(--color-shadow);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.items-table thead {
+    background-color: var(--color-background);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.items-table th, .items-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.items-table th {
+    font-weight: 600;
+    color: var(--color-text-dark);
+    font-size: 14px;
+}
+
+.items-table tr.completed {
+    background-color: #f0fff0; /* Fondo más claro para completados */
+}
+
+.items-table tr.completed .item-name-cell {
+    text-decoration: line-through;
+    color: var(--color-text-gray);
+}
+
+/* Stock Input Style */
+.quantity-input {
+    width: 80px;
+    padding: 5px 8px;
+    text-align: center;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+}
+
+/* Checklist Checkbox Style */
+.completion-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.btn-icon {
+    color: var(--color-danger);
+    font-size: 16px;
+    transition: color 0.2s;
+}
+.btn-icon:hover {
+    color: #c0392b; 
+}
+
+.empty-list-message {
+    text-align: center;
+    padding: 40px;
+    color: var(--color-text-gray);
+    background-color: white;
+    border: 2px dashed var(--color-border);
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.sortable-handle {
+    cursor: grab;
+}
+
+/* Evitar que se arrastren los inputs de la cantidad */
+.item-quantity-cell input {
+    pointer-events: none; /* Deshabilita interacciones de ratón en el input durante el arrastre */
+}
+
+/* Si usas la misma clase para subtítulos, asegúrate de que también tengan el handle */
+.subtitle-row {
+    /* (estilos existentes) */
+    cursor: grab; /* Permitir arrastrar la fila completa del subtítulo si no tiene handle específico */
+}
+/* Aseguramos que la celda de nombre no sea el handle principal (si se definió una celda separada) */
+.item-name-cell {
+    cursor: default;
+}
