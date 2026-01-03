@@ -93,4 +93,4 @@ Si deseas contribuir, por favor:
 Este proyecto está bajo la Licencia MIT.
 
 ---
-*Hecho con 💙 por [Tu Nombre/Usuario]*
+*Hecho con 💙 por AibnKrysiuk
