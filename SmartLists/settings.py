@@ -27,9 +27,17 @@ BASE_DIR = Path(BASE_DIR)
 SECRET_KEY = 'django-insecure-s@0v77^9*_8j2a65&&b^drnys581qls%8xt7mz6u2p-z$-moas'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS_ENV = os.environ.get('ALLOWED_HOSTS')
+
+if ALLOWED_HOSTS_ENV:
+    # Si la variable de entorno existe, usa los hosts separados por coma.
+    # Esto manejará 'smartlists.onrender.com'
+    ALLOWED_HOSTS = ALLOWED_HOSTS_ENV.split(',')
+else:
+    # Si no hay variable de entorno (ej: en desarrollo local sin .env)
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
