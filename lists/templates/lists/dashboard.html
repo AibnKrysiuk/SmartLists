@@ -144,18 +144,17 @@
                 }
             </style>
 
-            <h2 style="margin-top: 30px;"><i class="fas fa-upload"></i> Import List from JSON</h2>
-            <div class="import-form-container" style="padding: 20px; border: 1px dashed #ccc; border-radius: 8px;">
+            <h2 class="section-title"><i class="fas fa-upload"></i> Import List from JSON</h2>
+            <div class="import-form-container">
                 <form method="post" action="{% url 'lists:import_json' %}" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <div style="display: flex; gap: 15px; align-items: center;">
-                        <label for="id_json_file" style="font-weight: bold; min-width: 120px;">
+                    <div class="import-form-row">
+                        <label for="id_json_file">
                             Select JSON File:
                         </label>
-                        <input type="file" name="json_file" id="id_json_file" accept=".json" required 
-                            style="flex-grow: 1; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                        <input type="file" name="json_file" id="id_json_file" accept=".json" required>
                         
-                        <button type="submit" class="btn-primary-small" style="min-width: 150px;">
+                        <button type="submit" class="btn-primary-small">
                             <i class="fas fa-file-import"></i> Import List
                         </button>
                     </div>

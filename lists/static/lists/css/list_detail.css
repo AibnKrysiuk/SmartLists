@@ -218,11 +218,6 @@
     cursor: grab;
 }
 
-/* Evitar que se arrastren los inputs de la cantidad */
-.item-quantity-cell input {
-    pointer-events: none; /* Deshabilita interacciones de ratón en el input durante el arrastre */
-}
-
 /* Si usas la misma clase para subtítulos, asegúrate de que también tengan el handle */
 .subtitle-row {
     /* (estilos existentes) */
@@ -231,4 +226,128 @@
 /* Aseguramos que la celda de nombre no sea el handle principal (si se definió una celda separada) */
 .item-name-cell {
     cursor: default;
+}
+
+/* ==================================== */
+/* 5. MEDIA QUERIES (list_detail) */
+/* ==================================== */
+
+@media (max-width: 768px) {
+    /* --- 5.1. Header de la Lista (list-header) --- */
+    .list-header {
+        /* Permitir que el header se envuelva en varias líneas */
+        flex-wrap: wrap; 
+        /* Alinear al inicio */
+        align-items: flex-start;
+        /* Reducir padding/margen si es necesario */
+        padding-bottom: 10px;
+    }
+
+    /* Título principal de la lista */
+    .list-title {
+        font-size: 24px;
+        margin-top: 5px; /* Separación si se envuelve */
+        margin-bottom: 5px;
+        flex-basis: 100%; /* Ocupa todo el ancho si hay muchos botones */
+        order: 1; /* Poner el título después del back-link */
+    }
+    
+    /* Botón "Back to My Lists" */
+    .list-header .back-link {
+        order: 0; /* Asegurar que el backlink va primero */
+        flex-basis: 100%;
+        margin-bottom: 10px;
+    }
+
+    /* Contenedor de botones (todos los botones después del back-link/título) */
+    .list-header > .btn-primary,
+    .list-header > .btn-secondary {
+        /* Reducir el tamaño de los botones para que quepan */
+        font-size: 12px;
+        padding: 8px 10px;
+        /* Quitar el margen izquierdo extra para apilar */
+        margin-left: 0 !important; 
+        margin-right: 10px; 
+        margin-bottom: 5px;
+        min-width: unset; /* Permitir que sean más pequeños */
+    }
+    
+    /* Botones de Exportar/Copiar */
+    #copy-plaintext-btn,
+    .list-header a[title*="Export PDF"] {
+        /* Asegurar que se vean bien */
+        max-width: 150px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+
+    /* --- 5.2. Formulario de Subtítulo/Sección --- */
+    /* El formulario de subtítulos debe apilarse */
+    .subtitle-form > div {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .subtitle-form button {
+        min-width: 100% !important;
+    }
+
+    /* --- 5.3. Formulario de Añadir Ítem --- */
+    .item-form .form-row {
+        /* Apilar los elementos del formulario */
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .item-name, .item-quantity, .item-unit {
+        flex-basis: auto; /* Ancho automático/completo */
+        width: 100%;
+    }
+
+    .add-button {
+        min-width: 100%; /* Ocupar todo el ancho */
+        padding: 12px 15px !important;
+    }
+
+
+    /* --- 5.4. Tabla de Ítems (Para resolver el corte de columnas) --- */
+    .items-table th, .items-table td {
+        padding: 8px 10px; /* Reducir el padding de las celdas */
+    }
+
+    /* Reducir el ancho de las columnas innecesarias o las de acción */
+    .items-table thead th:first-child {
+        width: 60% !important; /* Más espacio para el nombre del ítem */
+    }
+    .items-table thead th:nth-child(2) {
+        width: 5% !important; /* Columna 'Move' muy pequeña */
+    }
+    .items-table thead th:nth-child(3) {
+        width: 15% !important; /* Columna 'Quantity' más pequeña */
+    }
+    .items-table thead th:nth-child(4) {
+        width: 10% !important; /* Columna 'Unit' más pequeña */
+    }
+    .items-table thead th:last-child {
+        width: 10% !important; /* Columna 'Actions' muy pequeña */
+    }
+    
+    /* Asegurar que el input de cantidad sea pequeño */
+    .quantity-input {
+        width: 45px;
+        padding: 3px;
+        font-size: 14px;
+    }
+    
+    /* Centrar iconos de acción */
+    .item-actions-cell {
+        text-align: center;
+    }
+    
+    /* Asegurar que el handle de arrastre sea pequeño */
+    .handle-cell {
+        padding: 8px 5px !important; 
+    }
 }
