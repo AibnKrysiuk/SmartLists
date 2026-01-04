@@ -28,7 +28,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-s@0v77^9*_8j2a65&&b^drnys581qls%8xt7mz6u2p-z$-moas'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+#DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+DEBUG = True
 
 
 ALLOWED_HOSTS_ENV = os.environ.get('ALLOWED_HOSTS')
@@ -147,6 +148,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 STATICFILES_DIRS = [
+    BASE_DIR / 'static',
     # Puedes dejar esta lista vacía si solo usas 'static/' dentro de cada app.
     # Pero si tienes una carpeta 'assets' o 'global_static' en la raíz del proyecto, la pondrías aquí.
     # Para tu caso, si usas la estructura app/static/app/css/ ya debería funcionar 
@@ -154,5 +156,11 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+if not DEBUG:
+    # Si DEBUG es False (producción en Render)
+    STATIC_ROOT = BASE_DIR / "staticfiles"
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    # Si DEBUG es True (desarrollo local)
+    STATIC_ROOT = None
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'

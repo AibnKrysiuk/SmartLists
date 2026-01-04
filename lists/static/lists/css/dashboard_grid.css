@@ -30,6 +30,8 @@ body {
     background-color: var(--color-background);
     color: var(--color-text-dark);
     min-height: 100vh;
+
+    overflow-x: hidden;
 }
 
 a {
@@ -468,6 +470,44 @@ a {
     color: var(--color-text-dark);
 }
 
+/* Nuevo estilo para el título de la sección de importación */
+.section-title {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Base del contenedor de importación */
+.import-form-container {
+    padding: 20px; 
+    border: 1px dashed var(--color-border); 
+    border-radius: 8px;
+    margin-bottom: 50px; /* Para separarlo del final de la página */
+}
+
+/* Estilos de la fila Flex que se rompe */
+.import-form-row {
+    display: flex; 
+    gap: 15px; 
+    align-items: center;
+}
+
+.import-form-row label {
+    font-weight: bold; 
+    min-width: 120px;
+}
+
+.import-form-row input[type="file"] {
+    flex-grow: 1; 
+    padding: 5px; 
+    border: 1px solid var(--color-border); 
+    border-radius: 4px;
+}
+
+.import-form-row button {
+    min-width: 150px;
+}
 
 /* ==================================== */
 /* 4. MEDIA QUERIES (RESPONSIVE) */
@@ -495,6 +535,45 @@ a {
         gap: 15px;
     }
     
+    .list-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .top-nav .main-menu {
+        display: none; 
+    }
+
+    .top-nav {
+        padding: 10px 15px; /* Reducir padding en el top nav */
+    }
+
+    .import-form-container form > div {
+        /* El div con display: flex y gap: 15px debe apilarse */
+        flex-direction: column; 
+        gap: 10px !important; /* Reducir el gap si es necesario */
+        align-items: stretch !important; /* Asegurar que los elementos ocupen el 100% */
+    }
+
+    .import-form-container label, 
+    .import-form-container button {
+        /* Asegurar que el botón y el label ocupen el 100% */
+        min-width: 100% !important; 
+        /* En móvil, el botón principal debe ser grande */
+        padding: 12px 15px !important; 
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: stretch; /* Estirar elementos verticalmente */
+        gap: 15px;
+    }
+    
+    /* Que el botón "Create New List" ocupe todo el ancho en móvil */
+    .dashboard-header .btn-primary {
+        width: 100%;
+        justify-content: center;
+    }
+
     .list-grid {
         grid-template-columns: 1fr;
     }
