@@ -19,7 +19,7 @@ SmartLists es una aplicación web full-stack desarrollada con Django. Permite a 
 
 La aplicación está desplegada actualmente en [Render](https://render.com).
 
-* **URL de Producción:** `[AQUÍ VA EL ENLACE DE TU APLICACIÓN EN RENDER]`
+* **URL de Producción:** https://smartlists.onrender.com
 
 ### Requisitos del Sistema
 
@@ -33,7 +33,7 @@ Para el desarrollo local o si deseas correr la aplicación desde cero:
 
 1.  **Clonar el Repositorio:**
     ```bash
-    git clone [https://www.youtube.com/watch?v=9d7lq4oMyPk](https://www.youtube.com/watch?v=9d7lq4oMyPk)
+    git clone 
     cd SmartLists
     ```
 
